@@ -1,0 +1,75 @@
+buildscript {
+    repositories {
+        maven { url 'https://maven.fabric.io/public' }
+    }
+
+    dependencies {
+        classpath 'io.fabric.tools:gradle:1.+'
+    }
+}
+apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
+
+repositories {
+    maven { url 'https://maven.fabric.io/public' }
+}
+
+
+// Add the 500px key in keys.properties
+// api_key="YOUR_KEY"
+// for release to play store, add the following properties to keys.properties
+// add keys.properties to .gitignore - lest you wants your passwords in the repo
+//ext.key_alias="<your private key alias>"
+//ext.key_password="<your private key password>"
+//ext.store_file="<full path to your keystore file.jks>"
+//ext.store_password="<your keystore password>"
+
+//Properties keys = new Properties()
+//keys.load(new FileInputStream("keys.properties"))
+
+apply from: "keys.properties"
+
+android {
+    signingConfigs {
+        PlayStoreConfig {
+            keyAlias key_alias
+            keyPassword key_password
+            storeFile file(store_file)
+            storePassword store_password
+        }
+    }
+    compileSdkVersion 21
+    buildToolsVersion "21.1.1"
+    defaultConfig {
+        applicationId "com.orangepenguin.penguins"
+        minSdkVersion 15
+        targetSdkVersion 21
+        versionCode 1
+        versionName "1.0"
+
+        buildConfigField "String", "PX_API_KEY", "\"" + api_key + "\""
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFile '/Users/ilyatsymbal/Dropbox/projects/penguins/app/proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.android.support:appcompat-v7:21.0.2'
+    compile 'com.android.support:recyclerview-v7:21.0.0'
+    compile 'com.android.support:cardview-v7:21.0.0'
+    compile 'com.squareup.retrofit:retrofit:1.7.1'
+    compile 'com.squareup.picasso:picasso:2.4.0'
+    compile 'com.jakewharton:butterknife:6.1.0'
+    compile('com.crashlytics.sdk.android:crashlytics:2.2.2@aar') {
+        transitive = true;
+    }
+    compile('com.mopub.sdk.android:mopub:3.4.0@aar') {
+        transitive = true;
+    }
+}
